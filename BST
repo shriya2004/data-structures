@@ -1,0 +1,185 @@
+#include <stdio.h>
+#include <stdlib.h>
+struct node
+{
+    int data;
+    struct node *right_child;
+    struct node *left_child;
+};
+struct node *root = NULL;
+
+struct node *search(struct node *root,int x)
+{
+    if(root==NULL || root->data==x)
+        return root;
+    else if(x>root->data)
+        return search(root->right_child, x);
+    else
+        return search(root->left_child,x);
+}
+struct node* find_minimum(struct node *root)
+{
+    if(root == NULL)
+        return root;
+    else if(root->left_child != NULL)
+        return find_minimum(root->left_child);
+    return root;
+}
+int deletetree(struct node *root){
+if(root == NULL)
+return root;
+deletetree(root -> left_child);
+deletetree(root -> right_child);
+free(root);
+}
+
+struct node* new_node(int x)
+{
+    struct node *p;
+    p = malloc(sizeof(struct node));
+    p->data = x;
+    p->left_child = NULL;
+    p->right_child = NULL;
+
+    return p;
+}
+
+struct node* insert(struct node *root,int x)
+{
+ 
+    if(root==NULL)
+        return new_node(x);
+    else if(x>root->data)
+        root->right_child = insert(root->right_child, x);
+    else
+        root->left_child = insert(root->left_child,x);
+    return root;
+}
+
+struct node* delete(struct node *roo,int x)
+{
+ 
+    if(roo==NULL)
+        return NULL;
+    if (x>roo->data)
+        roo->right_child = delete(roo->right_child, x);
+    else if(x<root->data)
+        roo->left_child = delete(roo->left_child, x);
+    else
+    {
+        if(roo->left_child==NULL && roo->right_child==NULL)
+        {  
+            free(roo);
+            return NULL;
+        }
+
+        else if(roo->left_child==NULL || roo->right_child==NULL)
+        {  
+            struct node *temp;
+            if(roo->left_child==NULL) {
+temp = roo->right_child;
+               // temp = root->right_child;
+      if(roo == root)
+      root = temp;
+   }
+      else{
+                temp = root->left_child;
+if(roo == root)
+root = temp;
+            free(roo);
+            return temp;
+      }
+        }
+
+        else
+        {
+            struct node *temp = find_minimum(roo->right_child);
+            roo->data = temp->data;
+            roo->right_child = delete(roo->right_child, temp->data);
+        }
+    }
+    return root;
+}
+void mirror(struct node *Node)
+{
+    if (Node == NULL)
+        return;
+    else {
+        struct node* temp;
+        mirror(Node->left_child);
+        mirror(Node->right_child);
+        temp = Node->left_child;
+        Node->left_child = Node->right_child;
+        Node->right_child = temp;
+    }
+}
+void inorder(struct node *root)
+{
+    if(root!=NULL)
+    {
+        inorder(root->left_child);
+        printf(" %d ", root->data);
+        inorder(root->right_child);
+    }
+}
+
+int tree_height(struct node *root) {
+    if (root == NULL)
+        return 0;
+    else {
+        int left_height = tree_height(root->left_child);
+        int right_height = tree_height(root->right_child);
+        if (left_height >= right_height)
+            return left_height + 1;
+        else
+            return right_height + 1;
+    }
+}
+
+int main()
+{ int ch,key,i,r,h,f;
+struct node *s;
+while(1){
+printf("\n1.INSERT\n2.DELETE\n3.SEARCH\n4.inorder\n5.HEIGHT\n6.DELETE ENTIRE TREE\n7.EXIT\n8.MIRROR");
+printf("EnTER THE choicee : ");
+scanf("%d",&ch);
+switch(ch){
+case 1:if(root == NULL){
+printf("enter value to be insert : ");
+                               scanf("%d",&key);
+      root = insert(root,key);
+      }else{
+      printf("enter value to be insert : ");
+      scanf("%d",&key);
+insert(root,key);
+}
+      break;
+case 2:
+      printf("enter key to delete : ");
+      scanf("%d",&key);
+      delete(root,key);
+      break;
+case 3 :printf("enter key to search : ");
+                               scanf("%d",&key);
+                               s=search(root,key);
+      if(s != NULL)
+      printf("%d element is found",s->data);
+      else
+      printf("not found");
+break;
+case 4:inorder(root);
+      break;
+case 5:h = tree_height(root);
+      printf("height of tree is %d",h);
+      break;
+case 6:f = deletetree(root);
+      printf("%d ie tree has deleted",f);
+      break;
+case 8:mirror(root);
+      inorder(root);
+      break;
+case 7:exit(0);
+
+}
+}                                                                                                                                    
+}
